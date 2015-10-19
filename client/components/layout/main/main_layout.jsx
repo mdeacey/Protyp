@@ -1,32 +1,67 @@
 MainLayout = React.createClass({
   getInitialState() {
-    return {
-      items: [0, 1, 2, 3, 4].map(function(i, key, list) {
+    items = Items.find({userId: Meteor.userId()}).fetch();
+    counter = items.length;
+    if( counter == 0 ){
+      items = [0, 1, 2].map(function(i, key, list) {
         return {i: i, x: 0, y: i * 2, w: 3, h: 1};
-      }),
-      counter: 0,
+      });
+    }
+
+    return {
+      items: items,
+      counter: counter,
     };
   },
 
   onClick: function(){
-    console.log(this.state.counter);
+    var item = {
+      i: this.state.counter,
+      x: 0,
+      y: this.state.items.length * 2,
+      w: 3,
+      h: 1,
+      userId: Meteor.userId()
+    };
 
     this.setState({
-      items: this.state.items.concat({
-        i: this.state.counter,
-        x: 0,
-        y: this.state.items.length * 2, // puts it at the bottom
-        w: 3,
-        h: 1
-      })
+      items: this.state.items.concat(item)
     });
+
+    Items.insert(item);
 
     this.state.counter++;
   },
 
+  onDrag: function(layout, oldItem, newItem, placeholder, e){
+  },
+
+  onDragStop: function(layout, oldItem, newItem, placeholder, e){
+    _.each(layout, function(item){
+      console.log(item._id);
+      Items.update(item._id, {
+        $set: {
+          x: item.x,
+          y: item.y
+        }
+      });
+    });
+  },
+
+  onResize: function(layout, oldItem, newItem, placeholder, e){
+    _.each(layout, function(item){
+      Items.update(item._id, {
+        $set: {
+          w: item.w,
+          h: item.h
+        }
+      });
+    });
+  },
+
   addElement(item){
     this.state.counter++;
-    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.w}}>{item.i+1}</div>;
+    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.w, _id: item._id}}>{item.i+1}</div>;
   },
 
   render() {
@@ -35,7 +70,7 @@ MainLayout = React.createClass({
       <div>
         <div className="workshop">
           <div className="sidebar">
-            <ReactGridLayout className="layout" cols={3} rowHeight={30}>
+            <ReactGridLayout className="layout" cols={3} rowHeight={30} onDrag={this.onDrag.bind(this)} onResize={this.onResize.bind(this)} onDragStop={this.onDragStop.bind(this)}>
               {_.map(this.state.items, this.addElement)}
             </ReactGridLayout>
 
