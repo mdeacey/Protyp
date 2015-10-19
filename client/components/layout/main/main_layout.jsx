@@ -11,6 +11,7 @@ MainLayout = React.createClass({
     return {
       items: items,
       counter: counter,
+      workItems: []
     };
   },
 
@@ -34,6 +35,19 @@ MainLayout = React.createClass({
   },
 
   onDrag: function(layout, oldItem, newItem, placeholder, e){
+    if(e.clientX > 350){
+      toWorkItem = null;
+      items = _.reject(this.state.items, function(item){
+        if( item.i == newItem.i ){
+          toWorkItem = item;
+          return true;
+        }
+      });
+      this.setState({
+        items: items,
+        workItems: this.state.workItems.concat(toWorkItem)
+      });
+    }
   },
 
   onDragStop: function(layout, oldItem, newItem, placeholder, e){
@@ -78,6 +92,9 @@ MainLayout = React.createClass({
 
           </div>
           <div className="main-content">
+            <ReactGridLayout className="layout" cols={12} rowHeight={30}>
+              {_.map(this.state.workItems, this.addElement)}
+            </ReactGridLayout>
           </div>
         </div>
       </div>
