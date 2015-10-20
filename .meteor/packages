@@ -30,3 +30,6 @@ cosmos:browserify
 
 
 npm-container
+grigio:babel
+grove:react
+universe:modules

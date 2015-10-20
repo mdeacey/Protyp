@@ -1,0 +1,135 @@
+@DragDropContext(HTML5Backend)
+class MainLayout extends React.Component{
+  props = {
+    items: null,
+    leftPosition: 0,
+    topPosition: 0
+  }
+
+  constructor(props) {
+    super(props);
+
+    items = Items.find({userId: Meteor.userId()}).fetch();
+    counter = items.length;
+
+    this.state = {
+      items: items,
+      counter: counter,
+      workItems: [],
+      leftItems: [0,1,2,3]
+    };
+  }
+
+  onClick(){
+    var item = {
+      i: this.state.counter,
+      x: 0,
+      y: this.state.items.length * 2,
+      w: 3,
+      h: 1,
+      userId: Meteor.userId()
+    };
+
+    this.setState({
+      items: this.state.items.concat(item)
+    });
+
+    Items.insert(item);
+
+    this.state.counter++;
+  }
+
+  onDrag(layout, oldItem, newItem, placeholder, e){
+  }
+
+  onDragStop(layout, oldItem, newItem, placeholder, e){
+    _.each(layout, function(item){
+      Items.update(item._id, {
+        $set: {
+          x: item.x,
+          y: item.y
+        }
+      });
+    });
+  }
+
+  onDragStart(e){
+    clientX = e.nativeEvent.clientX;
+    clientY = e.nativeEvent.clientY;
+    this.props.leftPosition = clientX - e.target.offsetLeft;
+    this.props.topPosition = clientY - e.target.offsetTop;
+  }
+
+  onResize(layout, oldItem, newItem, placeholder, e){
+    _.each(layout, function(item){
+      Items.update(item._id, {
+        $set: {
+          w: item.w,
+          h: item.h
+        }
+      });
+    });
+  }
+
+  onDrop(data, e){
+    clientX = e.nativeEvent.clientX;
+    clientY = e.nativeEvent.clientY;
+
+    width = e.target.offsetWidth;
+    height = e.target.offetHeight;
+
+    cols_width = width/12;
+    cols_height = 70;
+
+    console.log(this.props.leftPosition);
+
+    x = Math.floor((clientX-e.target.offsetLeft-this.props.leftPosition)/cols_width);
+    y = Math.floor((clientY-e.target.offsetTop-this.props.topPosition)/cols_height);
+
+    var item = {
+      i: this.state.counter,
+      x: x,
+      y: y,
+      w: 3,
+      h: 1,
+      userId: Meteor.userId()
+    };
+
+    this.setState({
+      items: this.state.items.concat(item)
+    });
+
+    Items.insert(item);
+
+    this.state.counter++;
+  }
+
+  addElement(item){
+    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}}>{item.i+1}</div>;
+  }
+
+  addItem(){
+    return <Draggable type='itembox' className="itembox" onDragStart={this.onDragStart.bind(this)}>Item</Draggable>;
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="workshop">
+          <div className="sidebar">
+            {_.map(this.state.leftItems, this.addItem.bind(this))}
+          </div>
+          <div className="main-content">
+            <Droppable types={['itembox']} className="Droppable" onDrop={this.onDrop.bind(this)}>
+              <ReactGridLayout cols={12} rowHeight={70} onDrag={this.onDrag.bind(this)} onResize={this.onResize.bind(this)} onDragStop={this.onDragStop.bind(this)}>
+                {_.map(this.state.items, this.addElement)}
+              </ReactGridLayout>
+            </Droppable>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+this.MainLayout = MainLayout;

@@ -1,5 +1,8 @@
 {
   "externalify": "0.1.0",
   "reactify": "1.1.1",
-  "react-grid-layout": "0.8.5"
+  "react-grid-layout": "0.8.5",
+  "react-dnd": "2.0.0",
+  "react-drag-and-drop": "1.1.0",
+  "react-dnd-html5-backend": "2.0.0"
 }

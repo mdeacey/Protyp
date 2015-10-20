@@ -1,0 +1,53 @@
+var PropTypes = React.PropTypes;
+
+/**
+ * Implements the drag source contract.
+ */
+const itemSource = {
+  beginDrag: function (props) {
+    return {
+      text: props.text
+    };
+  }
+}
+
+ItemTypes = {
+  ITEMBOX: 'itembox'
+}
+/**
+ * Specifies the props to inject into your component.
+ */
+function collect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+@DragSource(ItemTypes.ITEMBOX, itemSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
+}))
+class Itembox{
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+
+    // Injected by React DnD:
+    isDragging: PropTypes.bool.isRequired,
+    connectDragSource: PropTypes.func.isRequired
+  }
+
+  render() {
+    const isDragging = this.props.isDragging;
+    const connectDragSource = this.props.connectDragSource;
+    const text = this.props.text;
+
+    return connectDragSource(
+      <div style={{ opacity: isDragging ? 0.5 : 1 }}>
+        {text}
+      </div>
+    );
+  }
+}
+
+this.Itembox = Itembox
