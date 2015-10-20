@@ -16,7 +16,12 @@ class MainLayout extends React.Component{
       items: items,
       counter: counter,
       workItems: [],
-      leftItems: [0,1,2,3]
+      leftItems: [
+        {color: '#f76d3c'},
+        {color: '#5481e6'},
+        {color: '#98cb4a'},
+        {color: '#913ccd'}
+      ]
     };
   }
 
@@ -92,6 +97,7 @@ class MainLayout extends React.Component{
       y: y,
       w: 3,
       h: 1,
+      bgcolor: data.itembox,
       userId: Meteor.userId()
     };
 
@@ -105,11 +111,11 @@ class MainLayout extends React.Component{
   }
 
   addElement(item){
-    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}}>{item.i+1}</div>;
+    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}} style={{backgroundColor: item.bgcolor}}></div>;
   }
 
-  addItem(){
-    return <Draggable type='itembox' className="itembox" onDragStart={this.onDragStart.bind(this)}>Item</Draggable>;
+  addItem(item){
+    return <Draggable key={item.color} type='itembox' data={item.color} className="itembox" onDragStart={this.onDragStart.bind(this)} style={{backgroundColor: item.color}}></Draggable>;
   }
 
   render() {
