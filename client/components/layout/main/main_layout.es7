@@ -118,15 +118,18 @@ class MainLayout extends React.Component{
     return <Draggable key={item.color} type='itembox' data={item.color} className="itembox" onDragStart={this.onDragStart.bind(this)} style={{backgroundColor: item.color}}></Draggable>;
   }
 
+  onDragOver(e){
+  }
+
   render() {
     return (
       <div>
+        <div className="sidebar">
+          {_.map(this.state.leftItems, this.addItem.bind(this))}
+        </div>
         <div className="workshop">
-          <div className="sidebar">
-            {_.map(this.state.leftItems, this.addItem.bind(this))}
-          </div>
-          <div className="main-content">
-            <Droppable types={['itembox']} className="Droppable" onDrop={this.onDrop.bind(this)}>
+          <div className="main-content container">
+            <Droppable types={['itembox']} className="Droppable" onDrop={this.onDrop.bind(this)} onDragOver={this.onDragOver.bind(this)}>
               <ReactGridLayout cols={12} rowHeight={70} onDrag={this.onDrag.bind(this)} onResize={this.onResize.bind(this)} onDragStop={this.onDragStop.bind(this)}>
                 {_.map(this.state.items, this.addElement)}
               </ReactGridLayout>
