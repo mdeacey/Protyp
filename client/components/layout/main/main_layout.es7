@@ -1,3 +1,5 @@
+Menu = ReactBurguerMenu.push;
+
 @DragDropContext(HTML5Backend)
 class MainLayout extends React.Component{
   props = {
@@ -124,14 +126,14 @@ class MainLayout extends React.Component{
   render() {
     return (
       <div>
-        <div className="sidebar">
+        <Menu width={285}>
           {_.map(this.state.leftItems, this.addItem.bind(this))}
-        </div>
+        </Menu>
         <div className="workshop">
           <div className="main-content container">
             <Droppable types={['itembox']} className="Droppable" onDrop={this.onDrop.bind(this)} onDragOver={this.onDragOver.bind(this)}>
               <ReactGridLayout cols={12} rowHeight={70} onDrag={this.onDrag.bind(this)} onResize={this.onResize.bind(this)} onDragStop={this.onDragStop.bind(this)}>
-                {_.map(this.state.items, this.addElement)}
+                {_.map(this.state.items, this.addElement.bind(this))}
               </ReactGridLayout>
             </Droppable>
           </div>

@@ -14,23 +14,20 @@
   background: #eee;
   float: left;
   overflow-y: auto;
-  position: fixed;
-  padding-top: 60px;
   top: 0px;
 }
 
 .itembox{
   width: 90%;
   margin: 0 auto;
-  height: 50px;
+  height: 60px;
   background: #ccc;
   margin: 10px;
 }
 
 .main-content{
   width: 100%;
-  padding-left: 300px;
-  margin-top: 60px;
+  margin-top: 50px;
 }
 
 .navbar{
@@ -49,3 +46,28 @@
   height: 200px !important;
   background: green;
 }
+
+.bm-menu-wrap{
+  background: #f9f9f9;
+}
+
+.bm-cross{
+  color: #a23;
+}
+
+.bm-burger-icon {
+  background: #373a47;
+
+  &:first-of-type{
+    top: 86px !important;
+  }
+
+  &:nth-of-type(2){
+    top: 98px !important;
+  }
+
+  &:last-of-type{
+    top: 110px !important;
+  }
+}
+
