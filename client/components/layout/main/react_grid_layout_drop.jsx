@@ -7,6 +7,10 @@ ReactGridLayoutDrop = React.createClass({
     console.log('conchale');
   },
 
+	onEndDrop () {
+		console.log('dnd ended');
+	}, 
+	
   renderGrid() {
     return React.createElement(ReactGridLayout,
       _.extend({

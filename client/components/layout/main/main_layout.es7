@@ -2,140 +2,161 @@ Menu = ReactBurguerMenu.push;
 
 @DragDropContext(HTML5Backend)
 class MainLayout extends React.Component{
-  props = {
-    items: null,
-    leftPosition: 0,
-    topPosition: 0
+  props = { 
+    menuItems : null, 
+    gridItems : null, 
+    sideWidth : 285
   }
+  
+  
+//------ constructor --------------
 
   constructor(props) {
     super(props);
-
-    items = Items.find({userId: Meteor.userId()}).fetch();
-    counter = items.length;
-
     this.state = {
-      items: items,
-      counter: counter,
-      workItems: [],
-      leftItems: [
-        {color: '#f76d3c'},
-        {color: '#5481e6'},
-        {color: '#98cb4a'},
-        {color: '#913ccd'}
-      ]
+      menuItems : [
+        { width: '250px', height: '100px', bgcolor: '#f76d3c' },
+        { width: '200px', height: '50px', bgcolor: '#5481e6' },
+        { width: '100px', height: '100px', bgcolor: '#98cb4a' },
+        { width: '150px', height: '50px', bgcolor: '#913ccd' }
+      ], 
+      gridItems : [
+        { i: 1, x: 0, y: 2, w: 3, h: 1, bgcolor:'#f76d3c' },
+        { i: 2, x: 3, y: 2, w: 3, h: 1, bgcolor:'#5481e6' },
+        { i: 3, x: 6, y: 2, w: 3, h: 1, bgcolor:'#98cb4a' }
+      ], 
+      draggable : false,
+      dragged : 0
     };
   }
+  
+  
+//----------------------- Event Handling -------------------------  
 
-  onClick(){
-    var item = {
-      i: this.state.counter,
-      x: 0,
-      y: this.state.items.length * 2,
-      w: 3,
-      h: 1,
-      userId: Meteor.userId()
-    };
-
-    this.setState({
-      items: this.state.items.concat(item)
-    });
-
-    Items.insert(item);
-
-    this.state.counter++;
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleMouseDown.bind(this), false);
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
+    document.addEventListener('mouseup', this.handleMouseUp.bind(this), false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.handleMouseMove.bind(this), false);
+    document.removeEventListener('mouseup', this.handleMouseUp.bind(this), false);
   }
 
-  onDrag(layout, oldItem, newItem, placeholder, e){
-  }
-
-  onDragStop(layout, oldItem, newItem, placeholder, e){
-    _.each(layout, function(item){
-      Items.update(item._id, {
-        $set: {
-          x: item.x,
-          y: item.y
+  onMenuDragStart(e) {
+    this.setState({draggable:true});
+    oldItems = this.refs.ReactGridLayout.state.layout;
+    gridItems = this.state.gridItems;
+    for (g in gridItems) {
+      for (o in oldItems) {
+        if (gridItems[g].i == oldItems[o].i) {
+          gridItems[g].x = oldItems[o].x;
+          gridItems[g].y = oldItems[o].y;
+          gridItems[g].w = oldItems[o].w;
+          gridItems[g].h = oldItems[o].h;
+          break;
         }
-      });
-    });
-  }
-
-  onDragStart(e){
-    clientX = e.nativeEvent.clientX;
-    clientY = e.nativeEvent.clientY;
-    this.props.leftPosition = clientX - e.target.offsetLeft;
-    this.props.topPosition = clientY - e.target.offsetTop;
-  }
-
-  onResize(layout, oldItem, newItem, placeholder, e){
-    _.each(layout, function(item){
-      Items.update(item._id, {
-        $set: {
-          w: item.w,
-          h: item.h
-        }
-      });
-    });
-  }
-
-  onDrop(data, e){
-    clientX = e.nativeEvent.clientX;
-    clientY = e.nativeEvent.clientY;
-
-    width = e.target.offsetWidth;
-    height = e.target.offetHeight;
-
-    cols_width = width/12;
-    cols_height = 70;
-
-    console.log(this.props.leftPosition);
-
-    x = Math.floor((clientX-e.target.offsetLeft-this.props.leftPosition)/cols_width);
-    y = Math.floor((clientY-e.target.offsetTop-this.props.topPosition)/cols_height);
-
-    var item = {
-      i: this.state.counter,
-      x: x,
-      y: y,
-      w: 3,
-      h: 1,
-      bgcolor: data.itembox,
-      userId: Meteor.userId()
+      }
+    }
+    currDraggedMenuItem = gridItems.length + 1;
+    gridItems[gridItems.length] = {
+      i: currDraggedMenuItem, x: 0, y: 0, w: 3, h: 1, 
+      bgcolor:e.target.style.backgroundColor
     };
-
     this.setState({
-      items: this.state.items.concat(item)
+      gridItems : gridItems, 
+      dragged : currDraggedMenuItem
     });
-
-    Items.insert(item);
-
-    this.state.counter++;
   }
 
-  addElement(item){
-    return <div key={item.i} _grid={{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}} style={{backgroundColor: item.bgcolor}}></div>;
+  onMenuDragEnd (e) {
+    this.setState({draggable : false, dragged : 0});
   }
 
-  addItem(item){
-    return <Draggable key={item.color} type='itembox' data={item.color} className="itembox" onDragStart={this.onDragStart.bind(this)} style={{backgroundColor: item.color}}></Draggable>;
+  handleMouseDown (e) {
+    //if (e.target.className == 'itembox') 
+    this.setState({draggable:true})
+  }
+  handleMouseMove (e) {
+    if (this.state.draggable) {
+      X = Math.floor((e.clientX - 100) / (window.innerWidth / 12));
+      if (X < 0) X = 0;
+      Y = Math.floor((e.clientY - 100) / 70);
+      if (Y < 0) Y = 0;
+
+      tempItems = this.refs.ReactGridLayout.state.layout;
+      gridItems = this.state.gridItems;
+      dragged = this.state.dragged;
+      if (e.clientX > 0) {
+        for (g in gridItems) {
+          for (t in tempItems) {
+            if (gridItems[g].i == tempItems[t].i) {
+              gridItems[g].x = tempItems[t].x;
+              gridItems[g].y = tempItems[t].y + 1;
+              gridItems[g].w = tempItems[t].w;
+              gridItems[g].h = tempItems[t].h;
+              break;
+            }
+          }
+        }
+        for (g in gridItems) {
+          if (gridItems[g].i == dragged) {
+            gridItems[g].x = X;
+            gridItems[g].y = Y;
+            break;
+          }
+        }
+        this.setState({ gridItems : gridItems });
+      }
+    }
+  }
+  handleMouseUp (e) {
+    this.setState({draggable : false, dragged : 0});
+  }
+  
+  
+//-------- Adding Items -----------------  
+
+  addMenuItem(item){
+    return (
+      <MenuItem 
+        ref="MenuItem" 
+        className="itembox" 
+        _width={item.width}
+        _height={item.height}
+        bgcolor={item.bgcolor} 
+        onDragStart = {this.onMenuDragStart.bind(this)}
+        onDragEnd = {this.onMenuDragEnd.bind(this)}
+        onDrag = {this.handleMouseMove.bind(this)}
+      />
+    );
+  }
+  addGridItem(item){
+    return (
+      <div
+        className = {item.i}
+        key = {item.i} 
+        _grid = {{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}}
+        style = {{dbackgroundColor:item.bgcolor}} className={item.i}>
+        
+      </div>
+    )
   }
 
-  onDragOver(e){
-  }
+  
+//------------- Rendering ------------------
 
   render() {
     return (
       <div>
-        <Menu width={285}>
-          {_.map(this.state.leftItems, this.addItem.bind(this))}
+        <Menu width={this.props.sideWidth}>
+          {_.map(this.state.menuItems, this.addMenuItem.bind(this))}
         </Menu>
         <div className="workshop">
           <div className="main-content container">
-            <Droppable types={['itembox']} className="Droppable" onDrop={this.onDrop.bind(this)} onDragOver={this.onDragOver.bind(this)}>
-              <ReactGridLayout cols={12} rowHeight={70} onDrag={this.onDrag.bind(this)} onResize={this.onResize.bind(this)} onDragStop={this.onDragStop.bind(this)}>
-                {_.map(this.state.items, this.addElement.bind(this))}
-              </ReactGridLayout>
-            </Droppable>
+						<ReactGridLayout ref="ReactGridLayout" rowHeight={70}>
+              {_.map(this.state.gridItems, this.addGridItem.bind(this))}
+            </ReactGridLayout>
           </div>
         </div>
       </div>

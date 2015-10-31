@@ -1,10 +1,10 @@
 FlowRouter.route("/", {
   name: "Home",
   action(params) {
+    ReactLayout.render(Home);
     if (!Meteor.user()) {
       return FlowRouter.go('/signin');
     }
-    ReactLayout.render(Home);
   }
 });
 
@@ -18,7 +18,7 @@ FlowRouter.route("/signup", {
 FlowRouter.route("/signin", {
   name: "Signin",
   action(params) {
-    ReactLayout.render(Signin);
+    ReactLayout.render(Home);
   }
 });
 
