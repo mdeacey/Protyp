@@ -137,7 +137,7 @@ class MainLayout extends React.Component{
         className = {item.i}
         key = {item.i} 
         _grid = {{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}}
-        style = {{dbackgroundColor:item.bgcolor}} className={item.i}>
+        style = {{backgroundColor:item.bgcolor}} className={item.i}>
         
       </div>
     )
