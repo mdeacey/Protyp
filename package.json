@@ -4,7 +4,8 @@
   "description": "protyp",
   "main": "Protyp.js",
   "dependencies": {
-    "babelify": "^6.4.0",
+    "babelify": "^7.1.0",
+    "bower": "^1.6.5",
     "externalify": "^0.1.0",
     "has-require": "^1.2.1",
     "react": "^0.14.0",
