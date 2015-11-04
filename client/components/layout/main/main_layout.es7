@@ -21,9 +21,9 @@ class MainLayout extends React.Component{
         { width: '150px', height: '50px', bgcolor: '#913ccd' }
       ], 
       gridItems : [
-        { i: 1, x: 0, y: 2, w: 3, h: 1, bgcolor:'#f76d3c' },
-        { i: 2, x: 3, y: 2, w: 3, h: 1, bgcolor:'#5481e6' },
-        { i: 3, x: 6, y: 2, w: 3, h: 1, bgcolor:'#98cb4a' }
+        { i: 1, x: 0, y: 0, w: 3, h: 1, bgcolor:'#f76d3c' },
+        { i: 2, x: 3, y: 0, w: 3, h: 1, bgcolor:'#5481e6' },
+        { i: 3, x: 6, y: 0, w: 3, h: 1, bgcolor:'#98cb4a' }
       ], 
       gridItems : [], 
       draggable : false,
@@ -80,11 +80,11 @@ class MainLayout extends React.Component{
   }
   handleMouseMove (e) {
     if (this.state.draggable) {
-      X = Math.floor((e.clientX - 100) / (window.innerWidth / 12));
+      X = Math.floor((e.clientX - 200) / (window.innerWidth / 12));
       if (X < 0) X = 0;
-      Y = Math.floor((e.clientY - 100) / 70);
+      Y = Math.floor((e.clientY - 50) / 70);
       if (Y < 0) Y = 0;
-
+      console.log(X,Y)
       tempItems = this.refs.ReactGridLayout.state.layout;
       gridItems = this.state.gridItems;
       dragged = this.state.dragged;
@@ -93,7 +93,7 @@ class MainLayout extends React.Component{
           for (t in tempItems) {
             if (gridItems[g].i == tempItems[t].i) {
               gridItems[g].x = tempItems[t].x;
-              gridItems[g].y = tempItems[t].y + 1;
+              gridItems[g].y = tempItems[t].y;
               gridItems[g].w = tempItems[t].w;
               gridItems[g].h = tempItems[t].h;
               break;
@@ -139,7 +139,7 @@ class MainLayout extends React.Component{
         key = {item.i} 
         _grid = {{x: item.x, y: item.y, w: item.w, h: item.h, _id: item._id}}
         style = {{backgroundColor:item.bgcolor}} className={item.i}>
-        
+          
       </div>
     )
   }
@@ -150,7 +150,7 @@ class MainLayout extends React.Component{
   render() {
     return (
       <div>
-        <Menu width={this.props.sideWidth}>
+        <Menu right width={this.props.sideWidth}>
           {_.map(this.state.menuItems, this.addMenuItem.bind(this))}
         </Menu>
         <div className="workshop">

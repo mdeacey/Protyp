@@ -1,4 +1,7 @@
 Header = React.createClass({
+  toggleMenu () {
+    console.log(Menu.toggleMenu)
+  },
   render() {
     return (
       <nav className="navbar navbar-default navbar-fixed-top">
@@ -11,13 +14,16 @@ Header = React.createClass({
               <span className="icon-bar"></span>
             </button>
 
-          <a className="navbar-brand" href="#">Protyp</a>
-        </div>
+            <a className="navbar-brand" href="#">Protyp</a>
+          </div>
 
-        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul className="nav navbar-nav navbar-right">
-            <li><a href="/">Home</a></li>
-            <li><a href="/logout">Logout</a></li>
+          <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul className="nav navbar-nav navbar-left">
+              <li><a href="#" onClick={this.toggleMenu}>Library</a></li>
+            </ul>
+            <ul className="nav navbar-nav navbar-right">
+              <li><a href="/">Home</a></li>
+              <li><a href="/logout">Logout</a></li>
             </ul>
           </div>
         </div>
