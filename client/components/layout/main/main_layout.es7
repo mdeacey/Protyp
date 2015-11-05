@@ -11,7 +11,7 @@ class MainLayout extends React.Component{
   
 //------ constructor --------------
 
-  constructor(props) {
+  constructor(props)  {
     super(props);
     this.state = {
       menuItems : [
@@ -27,7 +27,7 @@ class MainLayout extends React.Component{
       ], 
       gridItems : [], 
       draggable : false,
-      dragged : 0
+      dragged   : 0
     };
   }
   
